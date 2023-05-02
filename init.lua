@@ -22,12 +22,13 @@ DEALINGS IN THE SOFTWARE.
 ]]
 
 local function get_inventory_formspec(player_inv, player_name, own_inv, owner_name)
-  local formspec = "size[8,11]" ..
+  local formspec = "size[8,10.2]" ..
+  "box[-0.1,-0.1;8,10.6;#030303]"..
+  "box[-0.1,-0.1;8,0.7;black]"..
+  "box[-0.1,4.9;8,0.7;black]"..
   "label[0,0;" .. "# "..minetest.colorize("orange", player_name).."'s inventory" .. "]" ..
   "label[0,5;" .. "# "..minetest.colorize("orange", owner_name).."'s inventory" .. "]" ..
-  "box[-0.1,-0.1;8,0.7;black]" ..
-  "box[-0.1,4.9;8,0.7;black]" ..
-  "button_exit[0,10;2,1;cancel;Cancel]"
+  "button_exit[3,9.65;2,1;close;Close]"
   -- "listring[current_player;main]"
 
   for i = 1, player_inv:get_size("main") do
@@ -52,13 +53,13 @@ local function get_inventory_formspec(player_inv, player_name, own_inv, owner_na
     local itemcount = itemstack:get_count()
     if itemcount > 1 then
       formspec = formspec .. "item_image_button[" .. (p-1)%8 .. "," .. math.floor((p+23)/8) + 2.8 .. ";1,1;" .. itemname .. ";" .. itemcount .. ";]" ..
-      "label[" .. (p-1)%8+0.55 .. "," .. math.floor((p+23)/8) + 3.9 .. ";\n" .. itemcount .. "]"
+      "label[" .. (p-1)%8+0.55 .. "," .. math.floor((p+23)/8) + 2.9 .. ";\n" .. itemcount .. "]"
     elseif itemcount == 1 then
       formspec = formspec .. "item_image_button[" .. (p-1)%8 .. "," .. math.floor((p+23)/8) + 2.8 .. ";1,1;" .. itemname .. ";" .. itemcount .. ";]" ..
-      "label[" .. (p-1)%8+0.55 .. "," .. math.floor((p+23)/8) + 3.9 .. ";\n]"
+      "label[" .. (p-1)%8+0.55 .. "," .. math.floor((p+23)/8) + 2.9 .. ";\n]"
     else
       formspec = formspec .. "item_image_button[" .. (p-1)%8 .. "," .. math.floor((p+23)/8) + 2.8 .. ";1,1;" .. itemname .. ";" .. itemcount .. ";]" ..
-      "label[" .. (p-1)%8+0.55 .. "," .. math.floor((p+23)/8) + 3.9 .. ";\n]"
+      "label[" .. (p-1)%8+0.55 .. "," .. math.floor((p+23)/8) + 2.9 .. ";\n]"
     end
   end
   return formspec
@@ -89,7 +90,7 @@ minetest.register_chatcommand("inv", {
     local stop_globalstep = false
 
     minetest.register_on_player_receive_fields(function(player, formname, fields)
-      if formname == "inv_inspector:main" and fields.cancel then
+      if formname == "inv_inspector:main" and fields.close then
         stop_globalstep = true
         minetest.close_formspec(player_name, "inv_inspector:main")
       end
