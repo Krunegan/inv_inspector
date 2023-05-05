@@ -21,127 +21,77 @@ DEALINGS IN THE SOFTWARE.
 
 ]]
 
-local function get_inventory_formspec(player_inv, player_name, own_inv, owner_name)
+local function view_inventory(player_inv, player_name)
   local formspec = "size[8,10.2]" ..
   "box[-0.1,-0.1;8,10.6;#030303]"..
   "box[-0.1,-0.1;8,0.7;black]"..
-  "box[-0.1,4.9;8,0.7;black]"..
-  "label[0,0;" .. "# "..minetest.colorize("orange", player_name).."'s inventory" .. "]" ..
-  "label[0,5;" .. "# "..minetest.colorize("orange", owner_name).."'s inventory" .. "]" ..
-  "button_exit[3,9.65;2,1;close;Close]"
-  -- "listring[current_player;main]"
-
-  for i = 1, player_inv:get_size("main") do
-    local itemstack = player_inv:get_stack("main", i)
-    local itemname = itemstack:get_name()
-    local itemcount = itemstack:get_count()
-    if itemcount > 1 then
-      formspec = formspec .. "item_image_button[" .. (i-1)%8 .. "," .. math.floor((i-9)/8) + 1.8 .. ";1,1;" .. itemname .. ";" .. itemcount .. ";]" ..
-      "label[" .. (i-1)%8+0.55 .. "," .. math.floor((i-9)/8) + 1.9 .. ";\n" .. itemcount .. "]"
-    elseif itemcount == 1 then
-      formspec = formspec .. "item_image_button[" .. (i-1)%8 .. "," .. math.floor((i-9)/8) + 1.8 .. ";1,1;" .. itemname .. ";" .. itemcount .. ";]" ..
-      "label[" .. (i-1)%8+0.55 .. "," .. math.floor((i-9)/8) + 1.9 .. ";\n]"
-    else
-      formspec = formspec .. "item_image_button[" .. (i-1)%8 .. "," .. math.floor((i-9)/8) + 1.8 .. ";1,1;" .. itemname .. ";" .. itemcount .. ";]" ..
-      "label[" .. (i-1)%8+0.55 .. "," .. math.floor((i-9)/8) + 1.9 .. ";\n]"
-    end
-  end
-
-  for p = 1, own_inv:get_size("main") do
-    local itemstack = own_inv:get_stack("main", p)
-    local itemname = itemstack:get_name()
-    local itemcount = itemstack:get_count()
-    if itemcount > 1 then
-      formspec = formspec .. "item_image_button[" .. (p-1)%8 .. "," .. math.floor((p+23)/8) + 2.8 .. ";1,1;" .. itemname .. ";" .. itemcount .. ";]" ..
-      "label[" .. (p-1)%8+0.55 .. "," .. math.floor((p+23)/8) + 2.9 .. ";\n" .. itemcount .. "]"
-    elseif itemcount == 1 then
-      formspec = formspec .. "item_image_button[" .. (p-1)%8 .. "," .. math.floor((p+23)/8) + 2.8 .. ";1,1;" .. itemname .. ";" .. itemcount .. ";]" ..
-      "label[" .. (p-1)%8+0.55 .. "," .. math.floor((p+23)/8) + 2.9 .. ";\n]"
-    else
-      formspec = formspec .. "item_image_button[" .. (p-1)%8 .. "," .. math.floor((p+23)/8) + 2.8 .. ";1,1;" .. itemname .. ";" .. itemcount .. ";]" ..
-      "label[" .. (p-1)%8+0.55 .. "," .. math.floor((p+23)/8) + 2.9 .. ";\n]"
-    end
-  end
-  return formspec
-end
-
-local function get_crafting_formspec(player_inv, player_name, own_inv, owner_name)
-  local formspec = "size[8,10.2]" ..
-  "box[-0.1,-0.1;8,10.6;#030303]"..
-  "box[-0.1,-0.1;8,0.7;black]"..
-  "box[-0.1,4.9;8,0.7;black]"..
+  "box[-0.1,4.9;8,0.7;black]" ..
   "label[0,0;" .. "# "..minetest.colorize("orange", player_name).."'s crafting inventory" .. "]" ..
-  "label[0,5;" .. "# "..minetest.colorize("orange", owner_name).."'s crafting inventory" .. "]" ..
+  "label[0,5;" .. "# "..minetest.colorize("orange", player_name).."'s main inventory" .. "]" ..
   "button_exit[3,9.65;2,1;close;Close]"
-  -- "listring[current_player;main]"
 
   for i = 1, player_inv:get_size("craft") do
-    local itemstack = player_inv:get_stack("craft", i)
-    local itemname = itemstack:get_name()
-    local itemcount = itemstack:get_count()
-    if itemcount > 1 then
-      formspec = formspec .. "item_image_button[" .. (i-1)%3 + 2.5 .. "," .. math.floor((i-4)/3) + 1.8 .. ";1,1;" .. itemname .. ";" .. itemcount .. ";]" ..
-      "label[" .. (i-1)%3+3 .. "," .. math.floor((i-4)/3) + 1.9 .. ";\n" .. itemcount .. "]"
-    elseif itemcount == 1 then
-      formspec = formspec .. "item_image_button[" .. (i-1)%3 + 2.5 .. "," .. math.floor((i-4)/3) + 1.8 .. ";1,1;" .. itemname .. ";" .. itemcount .. ";]" ..
-      "label[" .. (i-1)%3+3 .. "," .. math.floor((i-4)/3) + 1.9 .. ";\n]"
-    else
-      formspec = formspec .. "item_image_button[" .. (i-1)%3 + 2.5 .. "," .. math.floor((i-4)/3) + 1.8 .. ";1,1;" .. itemname .. ";" .. itemcount .. ";]" ..
-      "label[" .. (i-1)%3+3 .. "," .. math.floor((i-4)/3) + 1.9 .. ";\n]"
-    end
+        local itemstack = player_inv:get_stack("craft", i)
+        local itemname = itemstack:get_name()
+        local itemcount = itemstack:get_count()
+        if itemcount > 1 then
+          formspec = formspec .. "label[" .. (i-1)%3+3 .. "," .. math.floor((i-4)/3) + 2 .. ";\n" .. itemcount .. "]"
+        elseif itemcount == 1 then
+          formspec = formspec .. "label[" .. (i-1)%3+3 .. "," .. math.floor((i-4)/3) + 2 .. ";\n]"
+        else
+          formspec = formspec .. "label[" .. (i-1)%3+3 .. "," .. math.floor((i-4)/3) + 2 .. ";\n]"
+        end
+        local item_image = "item_image[" .. (i-1)%3 + 2.5 .. "," .. math.floor((i-4)/3) + 1.9 .. ";1,1;" .. itemname .. "]"
+        local background = "box[" .. (i-1)%3 + 2.5 .. "," .. math.floor((i-4)/3) + 1.9 ..";0.8,0.9;#030303]"
+        formspec = formspec ..background..item_image
   end
 
-  for p = 1, own_inv:get_size("main") do
-    local itemstack = own_inv:get_stack("main", p)
-    local itemname = itemstack:get_name()
-    local itemcount = itemstack:get_count()
-    if itemcount > 1 then
-      formspec = formspec .. "item_image_button[" .. (p-1)%8 .. "," .. math.floor((p+23)/8) + 2.8 .. ";1,1;" .. itemname .. ";" .. itemcount .. ";]" ..
-      "label[" .. (p-1)%8+0.55 .. "," .. math.floor((p+23)/8) + 2.9 .. ";\n" .. itemcount .. "]"
-    elseif itemcount == 1 then
-      formspec = formspec .. "item_image_button[" .. (p-1)%8 .. "," .. math.floor((p+23)/8) + 2.8 .. ";1,1;" .. itemname .. ";" .. itemcount .. ";]" ..
-      "label[" .. (p-1)%8+0.55 .. "," .. math.floor((p+23)/8) + 2.9 .. ";\n]"
-    else
-      formspec = formspec .. "item_image_button[" .. (p-1)%8 .. "," .. math.floor((p+23)/8) + 2.8 .. ";1,1;" .. itemname .. ";" .. itemcount .. ";]" ..
-      "label[" .. (p-1)%8+0.55 .. "," .. math.floor((p+23)/8) + 2.9 .. ";\n]"
-    end
+  
+  for p = 1, player_inv:get_size("main") do
+        local itemstack = player_inv:get_stack("main", p)
+        local itemname = itemstack:get_name()
+        local itemcount = itemstack:get_count()
+        if itemcount > 1 then
+          formspec = formspec .."label[" .. (p-1)%8+0.55 .. "," .. math.floor((p+23)/8) + 2.9 .. ";\n" .. itemcount .. "]"
+        elseif itemcount == 1 then
+          formspec = formspec .."label[" .. (p-1)%8+0.55 .. "," .. math.floor((p+23)/8) + 2.9 .. ";\n]"
+        else
+          formspec = formspec .."label[" .. (p-1)%8+0.55 .. "," .. math.floor((p+23)/8) + 2.9 .. ";\n]"
+        end
+        local item_image = "item_image[" .. (p-1)%8 .. "," .. math.floor((p+23)/8) + 2.8 .. ";1,1;" .. itemname .. "]"
+        local box = "box[" .. (p-1)%8 .. "," .. math.floor((p+23)/8) + 2.8 .. ";0.8,0.9;#030303]"
+        formspec = formspec ..item_image.. box
   end
+  
   return formspec
 end
 
-local function update_inventory_formspec(name, player_name)
+local function update_view_inventory(name, player_name)
   local player = minetest.get_player_by_name(player_name)
   local owner = minetest.get_player_by_name(name)
   if not player then
     return
   end
-  local inv = player:get_inventory()
-  local own_inv = owner:get_inventory()
-  local owner_name = owner:get_player_name(name)
-  local formspec = get_inventory_formspec(inv, player_name, own_inv, owner_name)
+  local player_inv = player:get_inventory()
+  local formspec = view_inventory(player_inv, player_name)
   minetest.show_formspec(name, "inv_inspector:main", formspec)
 end
 
-local function update_crafting_formspec(name, player_name)
-  local player = minetest.get_player_by_name(player_name)
-  local owner = minetest.get_player_by_name(name)
-  if not player then
-    return
-  end
-  local inv = player:get_inventory()
-  local own_inv = owner:get_inventory()
-  local owner_name = owner:get_player_name(name)
-  local formspec = get_crafting_formspec(inv, player_name, own_inv, owner_name)
-  minetest.show_formspec(name, "inv_inspector:crafting", formspec)
-end
+minetest.register_privilege("inv_inspector", {
+	description = "View players inventory",
+	give_to_singleplayer = false,
+})
 
 minetest.register_chatcommand("inv", {
   description = "View the main inventory of a player",
   params = "<playername>",
+  privs = {
+		inv_inspector = true
+	},
   func = function(name, param)
   local player = minetest.get_player_by_name(param)
   if player then
-    update_inventory_formspec(name, param)
+    update_view_inventory(name, param)
     local player_name = player:get_player_name()
     local timer = 0
     local stop_globalstep_main = false
@@ -157,40 +107,7 @@ minetest.register_chatcommand("inv", {
       if not stop_globalstep_main then
         timer = timer + dtime
         if timer >= 1 then
-          update_inventory_formspec(name, player_name)
-          timer = 0
-        end
-      end
-    end)
-  else
-    minetest.chat_send_player(name, "Player " .. param .. " not found.")
-  end
-end
-})
-
-minetest.register_chatcommand("inv_craft", {
-  description = "View the crafting inventory of a player",
-  params = "<playername>",
-  func = function(name, param)
-  local player = minetest.get_player_by_name(param)
-  if player then
-    update_crafting_formspec(name, param)
-    local player_name = player:get_player_name()
-    local timer = 0
-    local stop_globalstep_crafting = false
-
-    minetest.register_on_player_receive_fields(function(player, formname, fields)
-      if formname == "inv_inspector:crafting" and fields.close then
-        stop_globalstep_crafting = true
-        minetest.close_formspec(player_name, "inv_inspector:crafting")
-      end
-    end)
-
-    minetest.register_globalstep(function(dtime)
-      if not stop_globalstep_crafting then
-        timer = timer + dtime
-        if timer >= 1 then
-          update_crafting_formspec(name, player_name)
+          update_view_inventory(name, player_name)
           timer = 0
         end
       end
